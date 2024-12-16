@@ -6,7 +6,7 @@ interface AdsDataDisplayProps {
   data: DataForSeoResponse<SearchVolumeResult>;
 }
 
-const AdsDataDisplay: React.FC<AdsDataDisplayProps> = ({ data }) => {
+export const AdsDataDisplay: React.FC<AdsDataDisplayProps> = ({ data }) => {
   const task = data.tasks?.[0];
   
   if (!task) return null;
@@ -188,5 +188,3 @@ const AdsDataDisplay: React.FC<AdsDataDisplayProps> = ({ data }) => {
     </div>
   );
 };
-
-export default AdsDataDisplay;
