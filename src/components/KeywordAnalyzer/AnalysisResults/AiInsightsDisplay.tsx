@@ -24,7 +24,7 @@ interface AiInsightsDisplayProps {
   };
 }
 
-const AiInsightsDisplay: React.FC<AiInsightsDisplayProps> = ({ insights }) => {
+export const AiInsightsDisplay: React.FC<AiInsightsDisplayProps> = ({ insights }) => {
   const [expandedSection, setExpandedSection] = useState<number | null>(null);
   const content = insights?.choices?.[0]?.message?.content;
   
@@ -161,5 +161,3 @@ const AiInsightsDisplay: React.FC<AiInsightsDisplayProps> = ({ insights }) => {
     </div>
   );
 };
-
-export default AiInsightsDisplay;
