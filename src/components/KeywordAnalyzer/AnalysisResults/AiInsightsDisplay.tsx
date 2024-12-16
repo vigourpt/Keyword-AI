@@ -7,10 +7,11 @@ import {
   LineChart, 
   ChevronDown, 
   ChevronUp,
-  Tool,
+  Wrench,
   Share2,
   ArrowRight,
-  BarChart4
+  BarChart4,
+  AlertTriangle
 } from 'lucide-react';
 
 interface AiInsightsDisplayProps {
@@ -53,7 +54,7 @@ const AiInsightsDisplay: React.FC<AiInsightsDisplayProps> = ({ insights }) => {
       description: 'Current market analysis and opportunity'
     },
     { 
-      icon: Tool, 
+      icon: Wrench, 
       color: 'text-purple-600', 
       bg: 'bg-purple-50', 
       label: 'Content Strategy',
