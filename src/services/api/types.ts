@@ -15,8 +15,9 @@ export interface DataForSeoTask<T> {
     search_query?: string;
     location_code: number;
     language_code?: string;
-    device: string;
-    os: string;
+    device?: string;
+    os?: string;
+    keywords?: string[];
   };
   result: T[] | null;
 }
@@ -66,10 +67,16 @@ export interface SearchVolumeResult {
   search_volume: number;
   cpc: number;
   competition: number;
-  categories: string[];
+  competition_level: 'LOW' | 'MEDIUM' | 'HIGH';
   monthly_searches: Array<{
     year: number;
     month: number;
     search_volume: number;
   }>;
+  categories: string[];
+  keyword_properties: {
+    keyword_difficulty: number;
+    is_question: boolean;
+    is_commercial: boolean;
+  };
 }

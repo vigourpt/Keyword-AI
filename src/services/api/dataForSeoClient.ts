@@ -59,4 +59,20 @@ export class DataForSeoClient extends BaseApiClient {
 
     return this.handleResponse<DataForSeoResponse<SearchVolumeResult>>(response);
   }
+
+  async getSearchVolumeLive(params: SearchVolumeParams): Promise<DataForSeoResponse<SearchVolumeResult>> {
+    const payload = [{
+      keywords: params.keywords,
+      location_code: params.location_code || 2840, // Default to US
+      language_code: params.language_code || 'en',
+    }];
+
+    const response = await fetch(`${DATAFORSEO_CONFIG.baseUrl}/keywords_data/google_ads/search_volume/live`, {
+      method: 'POST',
+      headers: this.getHeaders(this.authToken),
+      body: JSON.stringify(payload)
+    });
+
+    return this.handleResponse<DataForSeoResponse<SearchVolumeResult>>(response);
+  }
 }

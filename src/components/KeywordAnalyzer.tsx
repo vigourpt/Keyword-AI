@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Search, Loader } from 'lucide-react';
 import { useKeywordAnalysis } from '../hooks/useKeywordAnalysis';
+import { AdsDataDisplay } from './KeywordAnalyzer/AnalysisResults/AdsDataDisplay';
+import { AiInsightsDisplay } from './KeywordAnalyzer/AnalysisResults/AiInsightsDisplay';
 
 const KeywordAnalyzer = () => {
   const [keyword, setKeyword] = useState('');
@@ -52,19 +54,8 @@ const KeywordAnalyzer = () => {
 
       {results && (
         <div className="space-y-6">
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-xl font-semibold mb-4">Ads Data</h3>
-            <pre className="bg-gray-50 p-4 rounded overflow-x-auto">
-              {JSON.stringify(results.adsData, null, 2)}
-            </pre>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-xl font-semibold mb-4">AI Insights</h3>
-            <pre className="bg-gray-50 p-4 rounded overflow-x-auto">
-              {JSON.stringify(results.aiInsights, null, 2)}
-            </pre>
-          </div>
+          <AdsDataDisplay data={results.searchVolumeData} />
+          <AiInsightsDisplay insights={results.insights} />
         </div>
       )}
     </div>

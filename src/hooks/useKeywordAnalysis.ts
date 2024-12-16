@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { DataForSeoClient } from '../services/api/dataForSeoClient';
 import { openAiService } from '../services/openAiService';
-import type { DataForSeoResponse, AdsSearchResult } from '../services/api/types';
+import type { DataForSeoResponse, SearchVolumeResult } from '../services/api/types';
 
 interface AnalysisResult {
-  adsData: DataForSeoResponse<AdsSearchResult>;
-  aiInsights: any;
+  searchVolumeData: DataForSeoResponse<SearchVolumeResult>;
+  insights: any;
 }
 
 export function useKeywordAnalysis() {
@@ -20,17 +20,17 @@ export function useKeywordAnalysis() {
     setError(null);
 
     try {
-      // Get ads data from DataForSEO
-      const adsData = await dataForSeoClient.searchAds({
-        search_query: keyword.trim()
+      // Get search volume data from DataForSEO
+      const searchVolumeData = await dataForSeoClient.getSearchVolumeLive({
+        keywords: [keyword.trim()]
       });
 
       // Get AI insights from OpenAI
-      const aiInsights = await openAiService.analyzeKeywords(keyword);
+      const insights = await openAiService.analyzeKeywords(keyword);
 
       setResults({
-        adsData,
-        aiInsights
+        searchVolumeData,
+        insights
       });
     } catch (err) {
       console.error('Analysis error:', err);
