@@ -29,12 +29,23 @@ export const AdsDataDisplay: React.FC<AdsDataDisplayProps> = ({ data }) => {
   }
 
   // Get the last 6 months of search volume data
-  const recentSearches = result.monthly_searches.slice(-6);
+  const recentSearches = result.monthly_searches?.slice(-6) || [];
   
   // Calculate trend percentage
   const firstVolume = recentSearches[0]?.search_volume || 0;
   const lastVolume = recentSearches[recentSearches.length - 1]?.search_volume || 0;
   const trendPercentage = firstVolume ? ((lastVolume - firstVolume) / firstVolume) * 100 : 0;
+
+  // Safely access keyword properties
+  const keywordProperties = result.keyword_properties || {};
+  const {
+    keyword_difficulty = 0,
+    is_question = false,
+    is_commercial = false,
+    cpc = 0,
+    competition_level = 'unknown',
+    search_volume = 0
+  } = keywordProperties;
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 space-y-8">
@@ -49,112 +60,68 @@ export const AdsDataDisplay: React.FC<AdsDataDisplayProps> = ({ data }) => {
               <TrendingUp className="h-5 w-5 text-blue-600" />
               <h4 className="font-medium text-gray-800">Search Volume</h4>
             </div>
-          </div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-blue-600">
-              {result.search_volume.toLocaleString()}
+            <span className={`text-sm font-medium ${trendPercentage >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              {trendPercentage >= 0 ? '+' : ''}{trendPercentage.toFixed(1)}%
             </span>
-            <span className="text-sm text-gray-500">monthly searches</span>
           </div>
-          {/* Mini Sparkline */}
-          <div className="mt-3 flex items-end gap-1 h-8">
-            {recentSearches.map((month, i) => (
-              <div
-                key={i}
-                style={{ 
-                  height: `${(month.search_volume / Math.max(...recentSearches.map(m => m.search_volume))) * 100}%` 
-                }}
-                className="flex-1 bg-blue-400 rounded-t"
-              />
-            ))}
-          </div>
+          <p className="text-2xl font-semibold text-gray-900">{search_volume.toLocaleString()}</p>
+          <p className="text-sm text-gray-500 mt-1">Monthly searches</p>
         </div>
 
         {/* CPC */}
         <div className="bg-green-50 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <DollarSign className="h-5 w-5 text-green-600" />
-              <h4 className="font-medium text-gray-800">CPC</h4>
-            </div>
+          <div className="flex items-center gap-2 mb-3">
+            <DollarSign className="h-5 w-5 text-green-600" />
+            <h4 className="font-medium text-gray-800">Cost Per Click</h4>
           </div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-green-600">
-              ${result.cpc.toFixed(2)}
-            </span>
-            <span className="text-sm text-gray-500">per click</span>
-          </div>
-          <div className="mt-3 flex items-center gap-2">
-            <div className="flex-1 h-2 bg-gray-200 rounded">
-              <div 
-                className="h-full bg-green-500 rounded" 
-                style={{ width: `${(result.cpc / 5) * 100}%` }}
-              />
-            </div>
-            <span className="text-sm text-gray-500">$5.00</span>
-          </div>
+          <p className="text-2xl font-semibold text-gray-900">${cpc.toFixed(2)}</p>
+          <p className="text-sm text-gray-500 mt-1">Average CPC</p>
         </div>
 
         {/* Competition */}
         <div className="bg-purple-50 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-purple-600" />
-              <h4 className="font-medium text-gray-800">Competition</h4>
-            </div>
+          <div className="flex items-center gap-2 mb-3">
+            <Users className="h-5 w-5 text-purple-600" />
+            <h4 className="font-medium text-gray-800">Competition</h4>
           </div>
-          <div className="flex items-baseline gap-2">
-            <span className={`text-2xl font-bold ${
-              result.competition_level === 'LOW' ? 'text-green-600' :
-              result.competition_level === 'MEDIUM' ? 'text-yellow-600' : 'text-red-600'
-            }`}>
-              {result.competition_level}
-            </span>
-            <span className="text-sm text-gray-500">
-              ({(result.competition * 100).toFixed(0)}%)
-            </span>
-          </div>
-          <div className="mt-3 flex items-center gap-2">
-            <div className="flex-1 h-2 bg-gray-200 rounded">
-              <div 
-                className={`h-full rounded ${
-                  result.competition_level === 'LOW' ? 'bg-green-500' :
-                  result.competition_level === 'MEDIUM' ? 'bg-yellow-500' : 'bg-red-500'
-                }`}
-                style={{ width: `${result.competition * 100}%` }}
-              />
-            </div>
-          </div>
+          <p className="text-2xl font-semibold text-gray-900 capitalize">{competition_level}</p>
+          <p className="text-sm text-gray-500 mt-1">Competition level</p>
         </div>
 
-        {/* Trend */}
-        <div className="bg-amber-50 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <BarChart className="h-5 w-5 text-amber-600" />
-              <h4 className="font-medium text-gray-800">Trend</h4>
-            </div>
+        {/* Difficulty */}
+        <div className="bg-orange-50 rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <BarChart className="h-5 w-5 text-orange-600" />
+            <h4 className="font-medium text-gray-800">Difficulty</h4>
           </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-500">Last 6 months</span>
-            <span className={`text-sm font-medium ${
-              trendPercentage > 0 ? 'text-green-600' : 'text-red-600'
-            }`}>
-              {trendPercentage.toFixed(1)}%
-            </span>
-          </div>
-          <div className="mt-3 flex items-end gap-1 h-12">
-            {recentSearches.map((month, i) => (
+          <p className="text-2xl font-semibold text-gray-900">{keyword_difficulty}%</p>
+          <p className="text-sm text-gray-500 mt-1">Keyword difficulty</p>
+        </div>
+      </div>
+
+      {/* Search Volume Chart */}
+      <div className="bg-gray-50 rounded-lg p-4">
+        <h4 className="text-sm font-semibold text-gray-600 mb-3">Monthly Search Trends</h4>
+        <div className="h-40">
+          {recentSearches.map((data, index) => (
+            <div
+              key={data.date}
+              className="inline-block w-1/6 h-full relative"
+              title={`${data.date}: ${data.search_volume} searches`}
+            >
               <div
-                key={i}
-                style={{ 
-                  height: `${(month.search_volume / Math.max(...recentSearches.map(m => m.search_volume))) * 100}%` 
+                className="absolute bottom-0 w-4/5 mx-auto left-0 right-0 bg-blue-500 rounded-t"
+                style={{
+                  height: `${(data.search_volume / Math.max(...recentSearches.map(d => d.search_volume || 0))) * 100}%`,
                 }}
-                className="flex-1 bg-amber-400 rounded-t"
-                title={`${month.year}-${month.month}: ${month.search_volume.toLocaleString()}`}
               />
-            ))}
-          </div>
+              <div className="absolute bottom-0 w-full text-center -mb-6">
+                <span className="text-xs text-gray-500">
+                  {new Date(data.date).toLocaleDateString(undefined, { month: 'short' })}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -164,24 +131,22 @@ export const AdsDataDisplay: React.FC<AdsDataDisplayProps> = ({ data }) => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="text-sm">
             <span className="text-gray-500">Keyword Difficulty</span>
-            <p className="font-medium mt-1">{result.keyword_properties.keyword_difficulty}%</p>
+            <p className="font-medium mt-1">{keyword_difficulty}%</p>
           </div>
           <div className="text-sm">
             <span className="text-gray-500">Type</span>
             <p className="font-medium mt-1">
-              {result.keyword_properties.is_question ? 'Question' : 
-               result.keyword_properties.is_commercial ? 'Commercial' : 'Informational'}
+              {is_question ? 'Question' : 
+               is_commercial ? 'Commercial' : 'Informational'}
             </p>
           </div>
           <div className="text-sm">
-            <span className="text-gray-500">Categories</span>
-            <p className="font-medium mt-1">{result.categories.join(', ')}</p>
+            <span className="text-gray-500">Competition</span>
+            <p className="font-medium mt-1 capitalize">{competition_level}</p>
           </div>
           <div className="text-sm">
-            <span className="text-gray-500">Location</span>
-            <p className="font-medium mt-1">
-              {task.data.location_code === 2840 ? 'United States' : task.data.location_code}
-            </p>
+            <span className="text-gray-500">CPC</span>
+            <p className="font-medium mt-1">${cpc.toFixed(2)}</p>
           </div>
         </div>
       </div>

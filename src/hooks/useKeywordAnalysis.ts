@@ -22,18 +22,31 @@ export function useKeywordAnalysis() {
   const analyzeKeyword = async (keyword: string) => {
     setLoading(true);
     setError(null);
+    setResults(null);
 
     try {
+      console.log('Starting analysis for keyword:', keyword);
+
       // Get search volume data from DataForSEO
+      console.log('Fetching search volume data...');
       const searchVolumeData = await dataForSeoClient.getSearchVolumeLive({
         keywords: [keyword.trim()]
       });
+      console.log('Received search volume data:', searchVolumeData);
 
       // Get AI insights from OpenAI
+      console.log('Getting AI insights...');
       const insights = await openAiService.analyzeKeywords(keyword);
+      console.log('Received AI insights:', insights);
 
       // Generate tool template
+      console.log('Generating tool template...');
       const templateResult = await generateToolTemplate(keyword, searchVolumeData, insights);
+      console.log('Template generation result:', templateResult);
+
+      if (!templateResult.success) {
+        console.warn('Template generation failed:', templateResult.error);
+      }
 
       setResults({
         searchVolumeData,
@@ -43,8 +56,11 @@ export function useKeywordAnalysis() {
       });
     } catch (err) {
       console.error('Analysis error:', err);
-      setError(err instanceof Error ? err.message : 'An error occurred during analysis');
-      setResults(null);
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred during analysis';
+      setError(errorMessage);
+      setResults({
+        error: errorMessage
+      });
     } finally {
       setLoading(false);
     }

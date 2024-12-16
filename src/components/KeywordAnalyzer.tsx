@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Loader } from 'lucide-react';
+import { Search, Loader, AlertTriangle } from 'lucide-react';
 import { useKeywordAnalysis } from '../hooks/useKeywordAnalysis';
 import { AdsDataDisplay } from './KeywordAnalyzer/AnalysisResults/AdsDataDisplay';
 import { AiInsightsDisplay } from './KeywordAnalyzer/AnalysisResults/AiInsightsDisplay';
@@ -47,9 +47,18 @@ const KeywordAnalyzer = () => {
         </div>
       </form>
 
+      {loading && (
+        <div className="flex items-center justify-center p-8">
+          <Loader className="h-8 w-8 animate-spin text-blue-500" />
+        </div>
+      )}
+
       {error && (
-        <div className="bg-red-50 text-red-700 p-4 rounded-lg mb-6">
-          {error}
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-4">
+          <div className="flex items-start gap-3 text-red-700">
+            <AlertTriangle className="h-5 w-5 flex-shrink-0" />
+            <p>{error}</p>
+          </div>
         </div>
       )}
 
@@ -65,8 +74,11 @@ const KeywordAnalyzer = () => {
             <ToolTemplateDisplay template={results.template} />
           )}
           {results.error && (
-            <div className="bg-red-50 text-red-600 p-4 rounded-lg">
-              {results.error}
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+              <div className="flex items-start gap-3 text-amber-700">
+                <AlertTriangle className="h-5 w-5 flex-shrink-0" />
+                <p>{results.error}</p>
+              </div>
             </div>
           )}
         </div>
