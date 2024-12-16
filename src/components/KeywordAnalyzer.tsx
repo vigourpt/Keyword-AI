@@ -3,6 +3,7 @@ import { Search, Loader } from 'lucide-react';
 import { useKeywordAnalysis } from '../hooks/useKeywordAnalysis';
 import { AdsDataDisplay } from './KeywordAnalyzer/AnalysisResults/AdsDataDisplay';
 import { AiInsightsDisplay } from './KeywordAnalyzer/AnalysisResults/AiInsightsDisplay';
+import { ToolTemplateDisplay } from './KeywordAnalyzer/AnalysisResults/ToolTemplateDisplay';
 
 const KeywordAnalyzer = () => {
   const [keyword, setKeyword] = useState('');
@@ -54,8 +55,20 @@ const KeywordAnalyzer = () => {
 
       {results && (
         <div className="space-y-6">
-          <AdsDataDisplay data={results.searchVolumeData} />
-          <AiInsightsDisplay insights={results.insights} />
+          {results.searchVolumeData && (
+            <AdsDataDisplay data={results.searchVolumeData} />
+          )}
+          {results.insights && (
+            <AiInsightsDisplay insights={results.insights} />
+          )}
+          {results.template && (
+            <ToolTemplateDisplay template={results.template} />
+          )}
+          {results.error && (
+            <div className="bg-red-50 text-red-600 p-4 rounded-lg">
+              {results.error}
+            </div>
+          )}
         </div>
       )}
     </div>
