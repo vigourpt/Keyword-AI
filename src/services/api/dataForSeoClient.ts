@@ -75,4 +75,20 @@ export class DataForSeoClient extends BaseApiClient {
 
     return this.handleResponse<DataForSeoResponse<SearchVolumeResult>>(response);
   }
+
+  private async handleResponse<T>(response: Response): Promise<T> {
+    const data = await response.json();
+    
+    console.log('DataForSEO API Response:', {
+      status: response.status,
+      statusText: response.statusText,
+      data: data
+    });
+
+    if (!response.ok) {
+      throw new Error(`DataForSEO API Error: ${response.status} ${response.statusText}`);
+    }
+
+    return data;
+  }
 }

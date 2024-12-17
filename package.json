@@ -10,10 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "date-fns": "^4.1.0",
+    "html2pdf.js": "^0.10.2",
     "lucide-react": "^0.344.0",
     "openai": "^4.76.3",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "recharts": "^2.15.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",

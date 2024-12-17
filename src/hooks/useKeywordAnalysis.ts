@@ -34,6 +34,10 @@ export function useKeywordAnalysis() {
       });
       console.log('Received search volume data:', searchVolumeData);
 
+      if (!searchVolumeData.tasks?.[0]?.result) {
+        throw new Error('No search volume data received from DataForSEO');
+      }
+
       // Get AI insights from OpenAI
       console.log('Getting AI insights...');
       const insights = await openAiService.analyzeKeywords(keyword);
@@ -51,16 +55,11 @@ export function useKeywordAnalysis() {
       setResults({
         searchVolumeData,
         insights,
-        template: templateResult.success ? templateResult.template : undefined,
-        error: templateResult.error
+        template: templateResult.template,
       });
     } catch (err) {
-      console.error('Analysis error:', err);
-      const errorMessage = err instanceof Error ? err.message : 'An error occurred during analysis';
-      setError(errorMessage);
-      setResults({
-        error: errorMessage
-      });
+      console.error('Error during keyword analysis:', err);
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
     } finally {
       setLoading(false);
     }

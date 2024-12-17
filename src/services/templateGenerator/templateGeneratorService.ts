@@ -28,7 +28,7 @@ export const generateToolTemplate = async (
       throw new Error('AI insights are required');
     }
 
-    const prompt = `Generate a comprehensive tool template for the keyword "${keyword}" based on the following market data and AI insights:
+    const prompt = `You are a specialized AI tool that generates comprehensive templates and calculators for online businesses. Generate a template for the keyword "${keyword}" based on the following data:
 
 Market Data:
 ${JSON.stringify(marketData, null, 2)}
@@ -36,37 +36,94 @@ ${JSON.stringify(marketData, null, 2)}
 AI Insights:
 ${JSON.stringify(aiInsights, null, 2)}
 
-Create a detailed template that maximizes the Hidden Money Door strategy, focusing on:
-1. Target audience and their pain points
-2. Content strategy that leverages low-cost content creation
-3. Monetization methods with emphasis on high-value opportunities
-4. Traffic generation from both organic and paid sources
-5. Conversion optimization strategies
-6. Implementation timeline and required resources
+IMPORTANT: Respond with ONLY a valid JSON object matching this EXACT structure. Do not include any text outside the JSON:
 
-Format the response as a structured JSON object matching the ToolTemplate interface.`;
+{
+  "name": "Tool name",
+  "description": "Tool description",
+  "targetAudience": "Target audience description",
+  "contentStrategy": {
+    "topics": ["topic1", "topic2"],
+    "formats": ["format1", "format2"],
+    "platforms": ["platform1", "platform2"]
+  },
+  "monetizationStrategy": {
+    "primaryMethod": "Primary monetization method",
+    "secondaryMethods": ["method1", "method2"],
+    "estimatedRevenue": "Revenue estimate"
+  },
+  "trafficSources": {
+    "organic": ["source1", "source2"],
+    "paid": ["source1", "source2"],
+    "social": ["source1", "source2"]
+  },
+  "conversionStrategy": {
+    "funnelStages": ["stage1", "stage2"],
+    "callsToAction": ["cta1", "cta2"],
+    "conversionPoints": ["point1", "point2"]
+  },
+  "implementation": {
+    "requiredResources": ["resource1", "resource2"],
+    "timeline": "Implementation timeline",
+    "metrics": ["metric1", "metric2"]
+  },
+  "calculator": {
+    "type": "Calculator type",
+    "title": "Calculator title",
+    "description": "Calculator description",
+    "fields": [
+      {
+        "name": "field1",
+        "label": "Field 1 Label",
+        "type": "number",
+        "defaultValue": 0
+      }
+    ]
+  }
+}`;
+
+    const messages = [
+      { 
+        role: "system", 
+        content: "You are a JSON generator. You MUST respond with ONLY a valid JSON object. No other text or explanation is allowed."
+      },
+      { role: "user", content: prompt }
+    ];
 
     console.log('Sending request to OpenAI...');
     const completion = await openai.chat.completions.create({
-      messages: [{ role: "user", content: prompt }],
-      model: "gpt-4-1106-preview",
-      response_format: { type: "json_object" },
+      messages,
+      model: "gpt-4",
       temperature: 0.7,
+      max_tokens: 2000
     });
 
     console.log('Received response from OpenAI');
-    const content = completion.choices[0].message.content;
-    if (!content) {
-      throw new Error('OpenAI returned empty content');
+    const responseContent = completion.choices[0].message.content;
+    console.log('Response content:', responseContent);
+
+    try {
+      console.log('Parsing OpenAI response...');
+      const template = JSON.parse(responseContent.trim()) as ToolTemplate;
+      
+      // Validate the template has required fields
+      if (!template.name || !template.description || !template.targetAudience) {
+        throw new Error('Missing required fields in template');
+      }
+
+      console.log('Successfully parsed template:', template);
+      return {
+        success: true,
+        template
+      };
+    } catch (error) {
+      console.error('Error parsing OpenAI response:', error);
+      console.log('Raw response:', responseContent);
+      return {
+        success: false,
+        error: `Failed to parse template: ${error}`
+      };
     }
-
-    console.log('Parsing OpenAI response...');
-    const template = JSON.parse(content) as ToolTemplate;
-
-    return {
-      success: true,
-      template
-    };
   } catch (error) {
     console.error('Error in generateToolTemplate:', error);
     return {
@@ -74,4 +131,4 @@ Format the response as a structured JSON object matching the ToolTemplate interf
       error: error instanceof Error ? error.message : 'Unknown error occurred in template generation'
     };
   }
-}
+};
