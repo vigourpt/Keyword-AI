@@ -36,7 +36,11 @@ ${JSON.stringify(marketData, null, 2)}
 AI Insights:
 ${JSON.stringify(aiInsights, null, 2)}
 
-IMPORTANT: Respond with ONLY a valid JSON object matching this EXACT structure. Do not include any text outside the JSON:
+IMPORTANT: 
+1. The calculator MUST be specifically designed for "${keyword}" and contain ONLY relevant fields and calculations.
+2. The calculator type and fields should directly relate to the main purpose or intent behind "${keyword}".
+3. All content must be 100% focused on "${keyword}" with no irrelevant or generic information.
+4. Respond with ONLY a valid JSON object matching this EXACT structure. Do not include any text outside the JSON:
 
 {
   "name": "Tool name",
@@ -58,9 +62,75 @@ IMPORTANT: Respond with ONLY a valid JSON object matching this EXACT structure. 
     "social": ["source1", "source2"]
   },
   "conversionStrategy": {
-    "funnelStages": ["stage1", "stage2"],
-    "callsToAction": ["cta1", "cta2"],
-    "conversionPoints": ["point1", "point2"]
+    "funnelStages": [
+      {
+        "name": "Awareness",
+        "description": "Educate potential users about credit card options and benefits",
+        "strategies": [
+          "Create educational content about credit card basics",
+          "Develop comparison tools for different card types",
+          "Share success stories and case studies",
+          "Optimize for informational keywords",
+          "Build trust through expert content"
+        ]
+      },
+      {
+        "name": "Consideration",
+        "description": "Help users evaluate different credit card options",
+        "strategies": [
+          "Provide detailed card comparisons",
+          "Offer interactive calculators and tools",
+          "Show real user reviews and ratings",
+          "Create decision guides",
+          "Highlight unique card benefits"
+        ]
+      },
+      {
+        "name": "Conversion",
+        "description": "Guide users to apply for the most suitable card",
+        "strategies": [
+          "Streamline application process",
+          "Offer pre-qualification tools",
+          "Provide application assistance",
+          "Show approval odds",
+          "Include clear CTAs"
+        ]
+      }
+    ],
+    "callsToAction": [
+      {
+        "stage": "Awareness",
+        "cta": "Learn more about credit cards",
+        "placement": "Educational content"
+      },
+      {
+        "stage": "Consideration",
+        "cta": "Compare card options",
+        "placement": "Comparison tools"
+      },
+      {
+        "stage": "Conversion",
+        "cta": "Apply now",
+        "placement": "Card details page"
+      }
+    ],
+    "conversionPoints": [
+      {
+        "type": "Primary",
+        "action": "Card application",
+        "placement": "Card details page"
+      },
+      {
+        "type": "Secondary",
+        "action": "Newsletter signup",
+        "placement": "Educational content"
+      },
+      {
+        "type": "Tertiary",
+        "action": "Tool usage",
+        "placement": "Calculator pages"
+      }
+    ]
   },
   "implementation": {
     "requiredResources": ["resource1", "resource2"],
@@ -68,15 +138,16 @@ IMPORTANT: Respond with ONLY a valid JSON object matching this EXACT structure. 
     "metrics": ["metric1", "metric2"]
   },
   "calculator": {
-    "type": "Calculator type",
-    "title": "Calculator title",
-    "description": "Calculator description",
+    "type": "Calculator type - must be specific to ${keyword}",
+    "title": "Calculator title - must relate to ${keyword}",
+    "description": "Calculator description - explain how it helps with ${keyword}",
     "fields": [
       {
         "name": "field1",
         "label": "Field 1 Label",
         "type": "number",
-        "defaultValue": 0
+        "defaultValue": 0,
+        "description": "Explanation of how this field relates to ${keyword}"
       }
     ]
   }

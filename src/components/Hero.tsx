@@ -23,14 +23,6 @@ const Hero = () => {
         >
           Start Analyzing Keywords
         </button>
-        
-        <div className="mt-12">
-          <img 
-            src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80"
-            alt="AI Technology Visualization"
-            className="rounded-xl shadow-2xl mx-auto"
-          />
-        </div>
       </div>
     </section>
   );

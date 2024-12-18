@@ -17,53 +17,53 @@ const KeywordAnalyzer = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-5xl mx-auto p-6">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Keyword Analysis Tool</h1>
+        <p className="text-gray-600">Analyze keywords, generate tools, and uncover monetization strategies in minutes using AI</p>
+      </div>
+
       <form onSubmit={handleSubmit} className="mb-8">
         <div className="flex gap-4">
-          <input
-            type="text"
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            placeholder="Enter a keyword to analyze..."
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none"
-          />
+          <div className="flex-1 relative">
+            <input
+              type="text"
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              placeholder="Enter a keyword to analyze..."
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+            />
+            <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+          </div>
           <button
             type="submit"
             disabled={loading || !keyword.trim()}
-            className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
             {loading ? (
               <>
-                <Loader className="animate-spin h-5 w-5" />
+                <Loader className="animate-spin" size={20} />
                 Analyzing...
               </>
             ) : (
-              <>
-                <Search className="h-5 w-5" />
-                Analyze
-              </>
+              'Analyze Keyword'
             )}
           </button>
         </div>
       </form>
 
-      {loading && (
-        <div className="flex items-center justify-center p-8">
-          <Loader className="h-8 w-8 animate-spin text-blue-500" />
-        </div>
-      )}
-
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-4">
-          <div className="flex items-start gap-3 text-red-700">
-            <AlertTriangle className="h-5 w-5 flex-shrink-0" />
-            <p>{error}</p>
+        <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
+          <AlertTriangle className="text-red-500 mt-0.5" size={20} />
+          <div>
+            <h3 className="font-semibold text-red-800">Analysis Error</h3>
+            <p className="text-red-600">{error}</p>
           </div>
         </div>
       )}
 
       {results && (
-        <div className="space-y-6">
+        <div className="space-y-8">
           {results.searchVolumeData && (
             <AdsDataDisplay data={results.searchVolumeData} />
           )}

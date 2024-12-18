@@ -12,58 +12,74 @@ export class OpenAIService {
     return OpenAIService.instance;
   }
 
-  async analyzeKeywords(keywords: string) {
+  private async makeOpenAIRequest(messages: Array<{ role: string; content: string }>) {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${OPENAI_CONFIG.apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4',
+        messages,
+        temperature: 0.7,
+        max_tokens: 2000
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(`OpenAI API error: ${error.error?.message || 'Unknown error'}`);
+    }
+
+    return response.json();
+  }
+
+  async generateInsights(prompt: string) {
     try {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${OPENAI_CONFIG.apiKey}`,
-          'Content-Type': 'application/json',
+      return await this.makeOpenAIRequest([
+        {
+          role: 'system',
+          content: 'You are an AI expert in market analysis, user behavior, and monetization strategies. Provide detailed, data-driven insights in the requested JSON format.'
         },
-        body: JSON.stringify({
-          model: 'gpt-4',
-          messages: [
-            {
-              role: 'system',
-              content: `You are a monetization strategy expert specializing in Hidden Money Doors - opportunities where low-cost or free online content can lead to high-value advertising or affiliate markets.
-
-For the given keyword, analyze and provide the following in a structured format:
-
-1. Market Overview: Brief analysis of the current market and opportunity.
-
-2. Content Strategy: What type of free/low-cost content (tools, templates, calculators, guides) could attract traffic for this keyword?
-
-3. High-Value Redirect Opportunities: Identify related high-CPC keywords and niches where traffic could be redirected.
-
-4. Monetization Channels:
-- Direct advertising opportunities
-- Affiliate product recommendations
-- Premium service upsells
-- Related high-value keywords
-
-5. Traffic Generation: Platforms and methods to distribute the content.
-
-6. Conversion Strategy: How to convert free tool users into high-value opportunities.
-
-Format each section clearly and provide actionable insights.`,
-            },
-            {
-              role: 'user',
-              content: keywords,
-            },
-          ],
-          temperature: 0.7,
-          max_tokens: 1000,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('OpenAI API error: ' + await response.text());
-      }
-
-      return await response.json();
+        {
+          role: 'user',
+          content: prompt
+        }
+      ]);
     } catch (error) {
-      console.error('OpenAI API error:', error);
+      console.error('Error generating insights:', error);
+      throw error;
+    }
+  }
+
+  async analyzeKeywords(keyword: string) {
+    try {
+      const messages = [
+        {
+          role: 'system',
+          content: `You are a monetization strategy expert specializing in Hidden Money Doors - opportunities where low-cost or free online content can lead to high-value advertising or affiliate markets.
+
+For the given keyword, analyze and provide detailed insights about:
+
+1. Market Overview: Size, trends, and growth potential
+2. User Intent: Search intent, pain points, and needs
+3. Competition Analysis: Current players, gaps, and opportunities
+4. Content Strategy: Types of content that would work best
+5. Monetization Methods: Specific ways to generate revenue
+6. Implementation Plan: Step-by-step guide to execute
+
+Format your response as clear, actionable insights that can be immediately implemented.`
+        },
+        {
+          role: 'user',
+          content: `Analyze this keyword: ${keyword}`
+        }
+      ];
+
+      return await this.makeOpenAIRequest(messages);
+    } catch (error) {
+      console.error('Error analyzing keywords:', error);
       throw error;
     }
   }

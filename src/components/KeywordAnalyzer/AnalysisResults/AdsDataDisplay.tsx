@@ -23,7 +23,19 @@ interface AdsDataDisplayProps {
 }
 
 export const AdsDataDisplay: React.FC<AdsDataDisplayProps> = ({ data }) => {
-  const result = data.tasks[0]?.result[0];
+  // Check for API error response
+  if (data.tasks[0]?.status_code !== 20000) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <h2 className="text-xl font-semibold mb-6">Keyword Metrics</h2>
+        <p className="text-red-600">
+          Unable to fetch keyword data: {data.tasks[0]?.status_message || 'Unknown error'}
+        </p>
+      </div>
+    );
+  }
+
+  const result = data.tasks[0]?.result?.[0];
   if (!result) return null;
 
   const formatNumber = (num: number) => {

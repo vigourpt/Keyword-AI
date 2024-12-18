@@ -1,13 +1,26 @@
 import React, { useState } from 'react';
 import { Brain, Search, Wrench, HelpCircle, Menu, X } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+    if (window.location.pathname !== '/') {
+      navigate('/');
+      // Wait for navigation to complete before scrolling
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    } else {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
     }
     setIsMenuOpen(false);
   };
@@ -16,10 +29,10 @@ const Header = () => {
     <header className="fixed top-0 left-0 right-0 bg-white shadow-sm z-50">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
-          <div className="flex items-center cursor-pointer" onClick={() => scrollToSection('hero')}>
+          <Link to="/" className="flex items-center cursor-pointer">
             <Brain className="h-8 w-8 text-green-600" />
             <span className="ml-2 text-xl font-bold text-gray-900">KeywordAI</span>
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
@@ -31,7 +44,7 @@ const Header = () => {
             <NavLink 
               icon={<Wrench className="h-4 w-4" />} 
               text="Generate Tools" 
-              onClick={() => scrollToSection('features')}
+              onClick={() => navigate('/tool-generator')}
             />
             <NavLink 
               icon={<HelpCircle className="h-4 w-4" />} 
@@ -64,7 +77,7 @@ const Header = () => {
             <MobileNavLink 
               icon={<Wrench className="h-4 w-4" />} 
               text="Generate Tools" 
-              onClick={() => scrollToSection('features')}
+              onClick={() => navigate('/tool-generator')}
             />
             <MobileNavLink 
               icon={<HelpCircle className="h-4 w-4" />} 
